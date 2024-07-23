@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="pongGame" width="800" height="400" style="background-color:#000"></canvas>
+
+<script>
+var canvas = document.getElementById('pongGame');
+var context = canvas.getContext('2d');
+
+var ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    dx: 2,
+    dy: 2,
+    radius: 10,
+    color: '#f00'
+};
+
+var paddle = {
+    width: 15,
+    height: 80,
+    x: 0,
+    y: (canvas.height - 80) / 2,
+    speed: 2,
+    color: '#00f'
+};
+
+function drawBall() {
+    context.beginPath();
+    context.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
+    context.fillStyle = ball.color;
+    context.fill();
+    context.closePath();
+}
+
+function drawPaddle() {
+    context.beginPath();
+    context.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+    context.fillStyle = paddle.color;
+    context.fill();
+    context.closePath();
+}
+
+function update() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall();
+    drawPaddle();
+
+    if(ball.y + ball.dy < ball.radius || ball.y + ball.dy > canvas.height - ball.radius) {
+        ball.dy *= -1;
+    }
+
+    if(ball.x + ball.dx < ball.radius) {
+        if(ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
+            ball.dx *= -1;
+        }
+        else {
+            alert('Game Over');
+            document.location.reload();
+        }
+    }
+    else if(ball.x + ball.dx > canvas.width - ball.radius) {
+        ball.dx *= -1;
+    }
+
+    if(paddle.y < 0) {
+        paddle.y = 0;
+    }
+    if(paddle.y > canvas.height - paddle.height) {
+        paddle.y = canvas.height - paddle.height;
+    }
+
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+}
+
+setInterval(update, 10);
+
+document.addEventListener('keydown', function(event) {
+    switch(event.keyCode) {
+        case 38:
+            paddle.y -= paddle.speed;
+            break;
+        case 40:
+            paddle.y += paddle.speed;
+            break;
+    }
+});
+</script>
+
+</body>
+</html>
